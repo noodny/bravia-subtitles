@@ -7,6 +7,7 @@ var async = require('async');
 var fs = require('fs');
 var Iconv = require('iconv').Iconv;
 var download = require('./download');
+var strip = require('./strip');
 
 var cli = meow({
     help: [
@@ -45,6 +46,8 @@ opensubtitles.api.login()
 
                         var filename = subFile + '_' + result.SubLanguageID + '_' + (counter++) + '.' + result.SubFormat;
                         var data = iconv.convert(res).toString();
+
+                        data = strip(data, result.SubFormat);
 
                         fs.writeFileSync(path.join(location, filename), data, {
                             encoding: 'utf-8'
