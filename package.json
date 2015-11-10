@@ -1,7 +1,13 @@
 {
   "name": "bravia-subtitles",
   "version": "1.0.0",
-  "description": "",
+  "description": "Download movie subtitles which work flawlessly with Sony Bravia TVs",
+  "keywords": [
+    "subtitles",
+    "sony",
+    "bravia",
+    "opensubtitles"
+  ],
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
