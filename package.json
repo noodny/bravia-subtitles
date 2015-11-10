@@ -1,0 +1,29 @@
+{
+  "name": "bravia-subtitles",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "bsub": "index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/noodny/bravia-subtitles.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/noodny/bravia-subtitles/issues"
+  },
+  "homepage": "https://github.com/noodny/bravia-subtitles#readme",
+  "dependencies": {
+    "async": "^1.5.0",
+    "gunzip-maybe": "^1.2.1",
+    "iconv": "^2.1.11",
+    "meow": "^3.5.0",
+    "subtitler": "^2.4.0"
+  }
+}
