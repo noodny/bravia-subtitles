@@ -57,34 +57,63 @@ var subFile = file.replace(path.extname(file), '');
 subtitler.api.login()
     .then(function(token) {
 
-        subtitler.api.searchForFile(token, lang, location)
-            .then(function(results) {
-                results = results.splice(0, count);
+        subtitler.api.searchForFile(token, lang, location).then(function(results) {
+            results = results.splice(0, count);
 
-                var counter = 0;
+            var counter = 0;
 
-                async.eachLimit(results, 5, function(result, done) {
-                    download(result.SubDownloadLink, function(res) {
-                        var iconv = new Iconv(result.SubEncoding, 'utf-8');
+            async.eachLimit(results, 5, function(result, done) {
+                download(result.SubDownloadLink, function(res) {
+                    var iconv = new Iconv(result.SubEncoding, 'utf-8');
 
-                        var data = iconv.convert(res).toString();
-                        var format = detect(data) || result.SubFormat;
+                    var data = iconv.convert(res).toString();
+                    var format = detect(data) || result.SubFormat;
 
-                        if(SUPPORTED_FORMATS.indexOf(format) > -1) {
-                            var filename = subFile + '_' + result.SubLanguageID + '_' + (counter++) + '.' + format;
+                    if(SUPPORTED_FORMATS.indexOf(format) > -1) {
+                        var filename = subFile + '_' + result.SubLanguageID + '_' + (counter++) + '.' + format;
 
-                            data = strip(data, format);
+                        data = strip(data, format);
 
-                            fs.writeFileSync(path.join(directory, filename), data, {
-                                encoding: 'utf-8'
-                            });
-                        }
+                        fs.writeFileSync(path.join(directory, filename), data, {
+                            encoding: 'utf-8'
+                        });
+                    }
 
-                        done();
-                    });
-                }, function() {
+                    done();
+                });
+            }, function() {
+                if(counter) {
                     console.log('Downloaded ' + counter + ' subtitles.');
                     subtitler.api.logout();
-                });
+                } else {
+                    subtitler.api.searchForTitle(token, lang, file).then(function(results) {
+                        results = results.splice(0, count);
+
+                        async.eachLimit(results, 5, function(result, done) {
+                            download(result.SubDownloadLink, function(res) {
+                                var iconv = new Iconv(result.SubEncoding, 'utf-8');
+
+                                var data = iconv.convert(res).toString();
+                                var format = detect(data) || result.SubFormat;
+
+                                if(SUPPORTED_FORMATS.indexOf(format) > -1) {
+                                    var filename = subFile + '_' + result.SubLanguageID + '_' + (counter++) + '.' + format;
+
+                                    data = strip(data, format);
+
+                                    fs.writeFileSync(path.join(directory, filename), data, {
+                                        encoding: 'utf-8'
+                                    });
+                                }
+
+                                done();
+                            });
+                        }, function() {
+                            console.log('Downloaded ' + counter + ' subtitles.');
+                            subtitler.api.logout();
+                        });
+                    });
+                }
             });
+        });
     });
