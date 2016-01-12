@@ -8,6 +8,7 @@ var fs = require('fs');
 var Iconv = require('iconv').Iconv;
 var download = require('./download');
 var strip = require('./strip');
+var detect = require('./detect');
 
 var cli = meow({
     help: [
@@ -44,10 +45,11 @@ subtitler.api.login()
                     download(result.SubDownloadLink, function(res) {
                         var iconv = new Iconv(result.SubEncoding, 'utf-8');
 
-                        var filename = subFile + '_' + result.SubLanguageID + '_' + (counter++) + '.' + result.SubFormat;
                         var data = iconv.convert(res).toString();
+                        var format = detect(data) || result.SubFormat;
+                        var filename = subFile + '_' + result.SubLanguageID + '_' + (counter++) + '.' + format;
 
-                        data = strip(data, result.SubFormat);
+                        data = strip(data, format);
 
                         fs.writeFileSync(path.join(location, filename), data, {
                             encoding: 'utf-8'
