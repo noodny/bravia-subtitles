@@ -27,15 +27,18 @@ if(cli.input.length === 0) {
 }
 
 var lang = cli.flags.lang || 'pol';
-var file = path.basename(cli.input[0]);
+var location = cli.input[0];
+var file = path.basename(location);
+var directory = path.resolve(path.dirname(location));
+
 var count = cli.flags.count || 5;
-var location = path.resolve(path.dirname(cli.input[0]));
+
 var subFile = file.replace(path.extname(file), '');
 
 subtitler.api.login()
     .then(function(token) {
 
-        subtitler.api.searchForTitle(token, lang, file)
+        subtitler.api.searchForFile(token, lang, location)
             .then(function(results) {
                 results = results.splice(0, count);
 
@@ -51,7 +54,7 @@ subtitler.api.login()
 
                         data = strip(data, format);
 
-                        fs.writeFileSync(path.join(location, filename), data, {
+                        fs.writeFileSync(path.join(directory, filename), data, {
                             encoding: 'utf-8'
                         });
 
