@@ -30,6 +30,10 @@ module.exports = function(str, format) {
         str = str.replace(/<[^>]*>/g, '');
         str = str.replace(/<\{[^\{]\}*>/g, '');
         str = str.replace(/X[0-9:]* X[0-9:]* Y[0-9:]* Y[0-9:]*/g, '');
+
+        if(str[0] !== '\n') {
+            str = '\n' + str;
+        }
     }
 
     return str;
