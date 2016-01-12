@@ -9,16 +9,30 @@ module.exports = function(str, format) {
 
         // remove incorrectly timed lines
         var lines = str.split('\n'),
-            parsed = [];
+            parsed = [],
+            previous = null;
 
         lines.forEach(function(line) {
-            var times = line.match(/\{([0-9]*)}\{([0-9]*)}/);
+            var times = line.match(/\{([0-9]*)}\{([0-9]*)}/),
+                valid = true;
 
             if(times && times.length > 2) {
-                if(times[1] !== times[2]) {
-                    parsed.push(line);
+                // skip lines with no time, e.g. {0}{0}
+                if(times[1] === times[2]) {
+                    valid = false;
                 }
-            } else {
+
+                // skip lines which are out of order
+                if(previous && parseInt(times[1]) <= previous) {
+                    valid = false;
+                }
+
+                if(valid) {
+                    previous = parseInt(times[2]);
+                }
+            }
+
+            if(valid) {
                 parsed.push(line);
             }
         });
