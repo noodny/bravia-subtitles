@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var opensubtitles = require('subtitler');
+var subtitler = require('subtitler');
 var meow = require('meow');
 var path = require('path');
 var async = require('async');
@@ -25,16 +25,16 @@ if(cli.input.length === 0) {
     process.exit(0);
 }
 
-var lang = cli.flags.lang || 'eng';
+var lang = cli.flags.lang || 'pol';
 var file = path.basename(cli.input[0]);
 var count = cli.flags.count || 5;
 var location = path.resolve(path.dirname(cli.input[0]));
 var subFile = file.replace(path.extname(file), '');
 
-opensubtitles.api.login()
+subtitler.api.login()
     .then(function(token) {
 
-        opensubtitles.api.searchForTitle(token, lang, file)
+        subtitler.api.searchForTitle(token, lang, file)
             .then(function(results) {
                 results = results.splice(0, count);
 
@@ -57,7 +57,7 @@ opensubtitles.api.login()
                     });
                 }, function() {
                     console.log('Downloaded ' + results.length + ' subtitles.');
-                    opensubtitles.api.logout();
+                    subtitler.api.logout();
                 });
             });
     });
