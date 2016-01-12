@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+var SUPPORTED_FORMATS = ['ass', 'srt', 'sub', 'txt', 'smi'];
+
 var subtitler = require('subtitler');
 var meow = require('meow');
 var path = require('path');
@@ -50,18 +52,21 @@ subtitler.api.login()
 
                         var data = iconv.convert(res).toString();
                         var format = detect(data) || result.SubFormat;
-                        var filename = subFile + '_' + result.SubLanguageID + '_' + (counter++) + '.' + format;
 
-                        data = strip(data, format);
+                        if(SUPPORTED_FORMATS.indexOf(format) > -1) {
+                            var filename = subFile + '_' + result.SubLanguageID + '_' + (counter++) + '.' + format;
 
-                        fs.writeFileSync(path.join(directory, filename), data, {
-                            encoding: 'utf-8'
-                        });
+                            data = strip(data, format);
+
+                            fs.writeFileSync(path.join(directory, filename), data, {
+                                encoding: 'utf-8'
+                            });
+                        }
 
                         done();
                     });
                 }, function() {
-                    console.log('Downloaded ' + results.length + ' subtitles.');
+                    console.log('Downloaded ' + counter + ' subtitles.');
                     subtitler.api.logout();
                 });
             });
