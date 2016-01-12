@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 var SUPPORTED_FORMATS = ['ass', 'srt', 'sub', 'txt', 'smi'];
+var VIDEO_EXTENSIONS = ['mp4', 'mkv', 'avi', 'mpeg'];
 
 var subtitler = require('subtitler');
 var meow = require('meow');
@@ -18,18 +19,34 @@ var cli = meow({
         '  bsub [options] <file>',
         '',
         'Options',
-        '  --lang <lang> - specify subtitles language to search from (eng|pol|...) (defaults to eng)',
+        '  --lang <lang> - specify subtitles language to search from (eng|pol|...) (defaults to pol)',
         '  --count <number> - how many of the available subtitles should be downloaded (defaults to 5)'
     ]
 });
 
+var location;
+
 if(cli.input.length === 0) {
-    console.log('Missing filename parameter');
+    var files = fs.readdirSync(process.cwd());
+
+    if(files && files.length) {
+        for (var i = 0; i < files.length; i++) {
+            if(VIDEO_EXTENSIONS.indexOf(path.extname(files[i]).replace('.', '')) > -1) {
+                location = path.join(process.cwd(), files[i]);
+                break;
+            }
+        }
+    }
+} else {
+    location = cli.input[0];
+}
+
+if(!location) {
+    console.log('Missing filename parameter and no video files found in current directory!');
     process.exit(0);
 }
 
 var lang = cli.flags.lang || 'pol';
-var location = cli.input[0];
 var file = path.basename(location);
 var directory = path.resolve(path.dirname(location));
 
