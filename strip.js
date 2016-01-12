@@ -6,6 +6,24 @@ module.exports = function(str, format) {
             var regexp = new RegExp('{' + code + ':[^}]*}', 'gi');
             str = str.replace(regexp, '');
         });
+
+        // remove incorrectly timed lines
+        var lines = str.split('\n'),
+            parsed = [];
+
+        lines.forEach(function(line) {
+            var times = line.match(/\{([0-9]*)}\{([0-9]*)}/);
+
+            if(times && times.length > 2) {
+                if(times[1] !== times[2]) {
+                    parsed.push(line);
+                }
+            } else {
+                parsed.push(line);
+            }
+        });
+
+        str = parsed.join('\n');
     }
 
     if(format === 'srt') {
