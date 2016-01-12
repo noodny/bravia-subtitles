@@ -70,9 +70,10 @@ subtitler.api.login()
                     var format = detect(data) || result.SubFormat;
 
                     if(SUPPORTED_FORMATS.indexOf(format) > -1) {
-                        var filename = subFile + '_' + result.SubLanguageID + '_' + (counter++) + '.' + format;
-
                         data = strip(data, format);
+                        format = (format === 'sub' ? 'txt' : format);
+
+                        var filename = subFile + '_' + result.SubLanguageID + '_' + (counter++) + '.' + format;
 
                         fs.writeFileSync(path.join(directory, filename), data, {
                             encoding: 'utf-8'
@@ -97,9 +98,10 @@ subtitler.api.login()
                                 var format = detect(data) || result.SubFormat;
 
                                 if(SUPPORTED_FORMATS.indexOf(format) > -1) {
-                                    var filename = subFile + '_' + result.SubLanguageID + '_' + (counter++) + '.' + format;
-
                                     data = strip(data, format);
+                                    format = (format === 'sub' ? 'txt' : format);
+
+                                    var filename = subFile + '_' + result.SubLanguageID + '_' + (counter++) + '.' + format;
 
                                     fs.writeFileSync(path.join(directory, filename), data, {
                                         encoding: 'utf-8'
